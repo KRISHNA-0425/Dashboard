@@ -264,9 +264,24 @@ tbody tr:last-child td{border-bottom:none;}
 .template-download:hover{background:#dceefb;}
 .full-card{grid-column:span 2;}
 
-/* ── SETTINGS PAGE ── */
-.settings-page{flex:1;overflow-y:auto;padding:28px;}
-.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:900px;}
+/* ── SETTINGS FULL WIDTH ── */
+.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:1100px;}
+.color-swatch{width:28px;height:28px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:.15s;flex-shrink:0;}
+.color-swatch.selected{border-color:var(--skoda);box-shadow:0 0 0 2px rgba(27,46,60,.25);}
+.team-table{width:100%;border-collapse:collapse;}
+.team-table th{text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.9px;color:var(--muted);padding:10px 16px;border-bottom:1.5px solid var(--border);background:var(--bg);}
+.team-table td{padding:12px 16px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle;}
+.team-table tr:last-child td{border-bottom:none;}
+.team-table tr:hover td{background:#f8fafc;}
+.action-btn{border:1.5px solid var(--border);background:#fff;border-radius:7px;padding:5px 10px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Sora',sans-serif;transition:.15s;color:var(--text);display:inline-flex;align-items:center;gap:4px;}
+.action-btn:hover{border-color:var(--skoda);color:var(--skoda);}
+.action-btn.danger:hover{border-color:var(--red);color:var(--red);}
+.status-chip{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;}
+.sc-available{background:var(--green-bg);color:var(--green-dark);}
+.sc-busy{background:rgba(232,193,74,.15);color:#8a5c00;}
+.sc-break{background:var(--blue-bg);color:#2a5fb0;}
+.sc-off{background:var(--red-bg);color:var(--red);}
+.line-priority-badge{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--skoda);color:#fff;font-size:10px;font-weight:800;flex-shrink:0;}
 .scard{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);}
 .scard-head{padding:16px 20px;border-bottom:1px solid var(--border);font-size:14px;font-weight:800;}
 .scard-body{padding:18px 20px;display:flex;flex-direction:column;gap:14px;}
@@ -593,62 +608,244 @@ tbody tr:last-child td{border-bottom:none;}
 <!-- ═══════════════════ SETTINGS PAGE ═══════════════════ -->
 <div class="page" id="page-settings">
 <div class="settings-page">
-  <div style="margin-bottom:22px">
-    <div class="page-title">⚙️ System Settings</div>
-    <div style="font-size:12px;color:var(--muted);margin-top:4px">Configure call routing, notifications and team preferences</div>
+  <div style="margin-bottom:22px;">
+    <div class="page-title">⚙️ Settings</div>
+    <div style="font-size:12px;color:var(--muted);margin-top:4px">Manage your profile, team members, phone lines and routing</div>
   </div>
+
+  <!-- MY PROFILE + PHONE MAPPING -->
+  <div class="scard" style="margin-bottom:22px;">
+    <div class="scard-head" style="display:flex;align-items:center;justify-content:space-between;">
+      <span>👤 My Profile &amp; Phone Numbers</span>
+      <button class="btn-primary" style="font-size:12px;padding:7px 14px" onclick="openMyProfile()">✏️ Edit My Profile</button>
+    </div>
+    <div class="scard-body" id="myProfileView"></div>
+  </div>
+
   <div class="settings-grid">
+    <!-- CALL ROUTING -->
     <div class="scard">
-      <div class="scard-head">📞 Call Routing</div>
+      <div class="scard-head">📞 Call Routing Rules</div>
       <div class="scard-body">
         <div class="toggle-row">
           <div class="toggle-info"><div class="tl">Sequential Routing</div><div class="ts">Ring Line 1 → 2 → 3 in order</div></div>
           <div class="toggle on" onclick="this.classList.toggle('on')"></div>
         </div>
         <div class="toggle-row">
-          <div class="toggle-info"><div class="tl">Show Caller ID</div><div class="ts">Display name & number before answering</div></div>
+          <div class="toggle-info"><div class="tl">Show Caller ID on Screen</div><div class="ts">Display customer name &amp; number before answering</div></div>
           <div class="toggle on" onclick="this.classList.toggle('on')"></div>
         </div>
         <div class="toggle-row">
-          <div class="toggle-info"><div class="tl">Show Previous Technician</div><div class="ts">Display who handled the customer last</div></div>
+          <div class="toggle-info"><div class="tl">Show Previous Technician</div><div class="ts">Display who handled this customer last time</div></div>
           <div class="toggle on" onclick="this.classList.toggle('on')"></div>
         </div>
-        <div style="font-size:12px;font-weight:600;color:var(--muted)">Timeout per line (seconds)</div>
+        <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px">Timeout per line</div>
         <div class="timeout-row">
           <input class="num-input" value="15" type="number" min="5" max="60"/>
           <span style="font-size:12px;color:var(--muted)">seconds before routing to next line</span>
         </div>
-        <button class="save-btn" onclick="toast('✅ Routing settings saved')">Save Settings</button>
+        <button class="save-btn" onclick="toast('✅ Routing settings saved')">Save Routing Settings</button>
       </div>
     </div>
+
+    <!-- NOTIFICATIONS -->
     <div class="scard">
       <div class="scard-head">🔔 Notifications</div>
       <div class="scard-body">
         <div class="toggle-row">
-          <div class="toggle-info"><div class="tl">Missed Call Alert</div><div class="ts">Notify team on missed calls</div></div>
+          <div class="toggle-info"><div class="tl">Missed Call Alert</div><div class="ts">Highlight missed calls to entire team</div></div>
           <div class="toggle on" onclick="this.classList.toggle('on')"></div>
         </div>
         <div class="toggle-row">
-          <div class="toggle-info"><div class="tl">Conference Request Alert</div><div class="ts">Notify agent when added to a call</div></div>
+          <div class="toggle-info"><div class="tl">Conference Request Alert</div><div class="ts">Notify agent when patched into a call</div></div>
           <div class="toggle on" onclick="this.classList.toggle('on')"></div>
         </div>
         <div class="toggle-row">
-          <div class="toggle-info"><div class="tl">Daily Summary Email</div><div class="ts">Send call report at end of day</div></div>
+          <div class="toggle-info"><div class="tl">Daily Summary Email</div><div class="ts">Send call report at end of shift</div></div>
           <div class="toggle" onclick="this.classList.toggle('on')"></div>
         </div>
-        <button class="save-btn" onclick="toast('✅ Notification settings saved')">Save Settings</button>
+        <div class="toggle-row">
+          <div class="toggle-info"><div class="tl">Returning Customer Flag</div><div class="ts">Flag if customer called within last 7 days</div></div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <button class="save-btn" onclick="toast('✅ Notification settings saved')">Save Notification Settings</button>
       </div>
     </div>
-    <div class="scard">
-      <div class="scard-head">📱 Registered Lines</div>
+
+    <!-- PHONE LINES - EDITABLE -->
+    <div class="scard" style="grid-column:span 2">
+      <div class="scard-head" style="display:flex;align-items:center;justify-content:space-between;">
+        <span>📱 Registered Phone Lines</span>
+        <button class="btn-primary" style="font-size:12px;padding:7px 14px" onclick="openAddLine()">＋ Add Line</button>
+      </div>
       <div class="scard-body" id="linesSettings"></div>
     </div>
-    <div class="scard">
-      <div class="scard-head">🔧 Team Members</div>
-      <div class="scard-body" id="teamSettings"></div>
+
+    <!-- TEAM MEMBERS - FULL EDITABLE -->
+    <div class="scard" style="grid-column:span 2">
+      <div class="scard-head" style="display:flex;align-items:center;justify-content:space-between;">
+        <span>👷 Team Members</span>
+        <button class="btn-primary" style="font-size:12px;padding:7px 14px" onclick="openAddTeam()">＋ Add Member</button>
+      </div>
+      <div class="scard-body" id="teamSettings" style="padding:0"></div>
     </div>
   </div>
 </div>
+</div>
+
+<!-- ══ MODAL: MY PROFILE ══ -->
+<div class="modal-bg" id="myProfileModal">
+  <div class="modal" style="width:500px">
+    <div class="modal-title">👤 Edit My Profile</div>
+    <div class="modal-sub">Your details and the phone numbers that ring when a call is routed to you.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px">
+      <div class="field-row" style="display:flex;flex-direction:column;gap:5px">
+        <label class="field-label">Full Name *</label>
+        <input class="field-input" id="mp-name" placeholder="e.g. Rahul Singh"/>
+      </div>
+      <div class="field-row" style="display:flex;flex-direction:column;gap:5px">
+        <label class="field-label">Role / Designation</label>
+        <input class="field-input" id="mp-role" placeholder="e.g. Service Head"/>
+      </div>
+      <div class="field-row" style="display:flex;flex-direction:column;gap:5px">
+        <label class="field-label">Email</label>
+        <input class="field-input" id="mp-email" type="email" placeholder="rahul@skodakanpur.in"/>
+      </div>
+      <div class="field-row" style="display:flex;flex-direction:column;gap:5px">
+        <label class="field-label">Extension</label>
+        <input class="field-input" id="mp-ext" placeholder="e.g. 100"/>
+      </div>
+      <div class="field-row" style="grid-column:span 2;display:flex;flex-direction:column;gap:8px">
+        <label class="field-label">📱 My Phone Numbers (SIM)</label>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:2px;">These are the actual numbers that ring on your phone when a customer call is routed to you. Add as many as needed.</div>
+        <div id="mp-phones-list" style="display:flex;flex-direction:column;gap:7px;"></div>
+        <button type="button" onclick="addPhoneRow()" style="align-self:flex-start;background:var(--bg);border:1.5px dashed var(--border);border-radius:8px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;color:var(--muted);font-family:'Sora',sans-serif;">＋ Add Number</button>
+      </div>
+      <div class="field-row" style="grid-column:span 2;display:flex;flex-direction:column;gap:5px">
+        <label class="field-label">Avatar Colour</label>
+        <div style="display:flex;gap:8px" id="mpColorPicker">
+          <div class="color-swatch selected" data-color="#1b2e3c" style="background:#1b2e3c" onclick="pickMpColor(this)"></div>
+          <div class="color-swatch" data-color="#3dba7e" style="background:#3dba7e" onclick="pickMpColor(this)"></div>
+          <div class="color-swatch" data-color="#e8c14a" style="background:#e8c14a" onclick="pickMpColor(this)"></div>
+          <div class="color-swatch" data-color="#4a8fe8" style="background:#4a8fe8" onclick="pickMpColor(this)"></div>
+          <div class="color-swatch" data-color="#c084fc" style="background:#c084fc" onclick="pickMpColor(this)"></div>
+          <div class="color-swatch" data-color="#e05555" style="background:#e05555" onclick="pickMpColor(this)"></div>
+          <div class="color-swatch" data-color="#f97316" style="background:#f97316" onclick="pickMpColor(this)"></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-sec" onclick="closeMyProfile()">Cancel</button>
+      <button class="btn-pri" onclick="saveMyProfile()">💾 Save Profile</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: ADD / EDIT TEAM MEMBER ══ -->
+<div class="modal-bg" id="teamModal">
+  <div class="modal" style="width:480px">
+    <div class="modal-title" id="teamModalTitle">Add Team Member</div>
+    <div class="modal-sub" id="teamModalSub">Fill in the details for the new team member.</div>
+    <input type="hidden" id="tm-id"/>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px">
+      <div class="field-row" style="display:flex;flex-direction:column;gap:5px">
+        <label class="field-label">Full Name *</label>
+        <input class="field-input" id="tm-name" placeholder="e.g. Arjun Kumar"/>
+      </div>
+      <div class="field-row" style="display:flex;flex-direction:column;gap:5px">
+        <label class="field-label">Role / Designation *</label>
+        <input class="field-input" id="tm-role" placeholder="e.g. Senior Technician"/>
+      </div>
+      <div class="field-row" style="display:flex;flex-direction:column;gap:5px">
+        <label class="field-label">📱 Mobile Number (SIM)</label>
+        <input class="field-input" id="tm-phone" placeholder="+91 98765 43210"/>
+      </div>
+      <div class="field-row" style="display:flex;flex-direction:column;gap:5px">
+        <label class="field-label">Extension / Line No.</label>
+        <input class="field-input" id="tm-ext" placeholder="e.g. 101"/>
+      </div>
+      <div class="field-row" style="display:flex;flex-direction:column;gap:5px">
+        <label class="field-label">Email Address</label>
+        <input class="field-input" id="tm-email" placeholder="arjun@skodakanpur.in" type="email"/>
+      </div>
+      <div class="field-row" style="display:flex;flex-direction:column;gap:5px">
+        <label class="field-label">Status</label>
+        <select class="field-select" id="tm-status">
+          <option value="available">Available</option>
+          <option value="busy">Busy / On Call</option>
+          <option value="break">On Break</option>
+          <option value="off">Off Duty</option>
+        </select>
+      </div>
+      <div class="field-row" style="grid-column:span 2;display:flex;flex-direction:column;gap:5px">
+        <label class="field-label">Avatar Colour</label>
+        <div style="display:flex;gap:8px" id="colorPicker">
+          <div class="color-swatch" data-color="#3dba7e" style="background:#3dba7e" onclick="pickColor(this)"></div>
+          <div class="color-swatch" data-color="#e8c14a" style="background:#e8c14a" onclick="pickColor(this)"></div>
+          <div class="color-swatch" data-color="#4a8fe8" style="background:#4a8fe8" onclick="pickColor(this)"></div>
+          <div class="color-swatch" data-color="#c084fc" style="background:#c084fc" onclick="pickColor(this)"></div>
+          <div class="color-swatch" data-color="#e05555" style="background:#e05555" onclick="pickColor(this)"></div>
+          <div class="color-swatch" data-color="#f97316" style="background:#f97316" onclick="pickColor(this)"></div>
+          <div class="color-swatch" data-color="#1b2e3c" style="background:#1b2e3c" onclick="pickColor(this)"></div>
+        </div>
+      </div>
+    </div>
+    <div style="background:var(--blue-bg);border-radius:9px;padding:10px 14px;font-size:12px;color:var(--blue);margin-bottom:16px;border:1px solid rgba(74,143,232,.2)">
+      📱 <strong>Phone Mapping:</strong> The mobile number you enter here is the SIM number calls will be forwarded to via your telephony service (Exotel / MyOperator etc.)
+    </div>
+    <div class="modal-actions">
+      <button class="btn-sec" onclick="closeTeamModal()">Cancel</button>
+      <button class="btn-pri" id="teamModalSaveBtn" onclick="saveTeamMember()">Save Member</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: ADD / EDIT PHONE LINE ══ -->
+<div class="modal-bg" id="lineModal">
+  <div class="modal" style="width:460px">
+    <div class="modal-title" id="lineModalTitle">Add Phone Line</div>
+    <div class="modal-sub">Register a phone number to route incoming calls through.</div>
+    <input type="hidden" id="lm-id"/>
+    <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:18px">
+      <div class="field-row" style="display:flex;flex-direction:column;gap:5px">
+        <label class="field-label">Line Label *</label>
+        <input class="field-input" id="lm-label" placeholder="e.g. Primary Line, Service Desk…"/>
+      </div>
+      <div class="field-row" style="display:flex;flex-direction:column;gap:5px">
+        <label class="field-label">📱 Phone Number *</label>
+        <input class="field-input" id="lm-num" placeholder="+91 98765 43210"/>
+      </div>
+      <div class="field-row" style="display:flex;flex-direction:column;gap:5px">
+        <label class="field-label">Assigned To (Team Member)</label>
+        <select class="field-select" id="lm-assign">
+          <option value="">— Unassigned / Shared —</option>
+        </select>
+      </div>
+      <div class="field-row" style="display:flex;flex-direction:column;gap:5px">
+        <label class="field-label">Routing Priority</label>
+        <select class="field-select" id="lm-priority">
+          <option value="1">1 — Ring First</option>
+          <option value="2">2 — Ring Second</option>
+          <option value="3">3 — Backup</option>
+        </select>
+      </div>
+      <div class="field-row" style="display:flex;flex-direction:column;gap:5px">
+        <label class="field-label">Status</label>
+        <select class="field-select" id="lm-status">
+          <option value="active">Active</option>
+          <option value="standby">Standby</option>
+          <option value="disabled">Disabled</option>
+        </select>
+      </div>
+    </div>
+    <div style="background:var(--green-bg);border-radius:9px;padding:10px 14px;font-size:12px;color:var(--green-dark);margin-bottom:16px;border:1px solid rgba(61,186,126,.2)">
+      ✅ This number will be registered with your telephony provider. When a customer calls your service number, it will ring this phone in sequence.
+    </div>
+    <div class="modal-actions">
+      <button class="btn-sec" onclick="closeLineModal()">Cancel</button>
+      <button class="btn-pri" onclick="saveLineEntry()">Save Line</button>
+    </div>
+  </div>
 </div>
 
 <!-- CONFERENCE MODAL -->
@@ -759,6 +956,7 @@ async function init(){
   renderCustomerGrid(allCustomers);
   renderTeamSettings();
   renderLinesSettings();
+  renderMyProfile();
   updateMissedBadge();
   updateClock();
   setInterval(updateClock,1000);
@@ -1145,27 +1343,330 @@ function showImportErr(msg){ document.getElementById('importErrMsg').textContent
 function hideImportMessages(){ document.getElementById('importOk').classList.remove('show'); document.getElementById('importErr').classList.remove('show'); document.getElementById('confirmImportBtn').style.display='none'; }
 
 // ═══════════════════════════════════════
-// SETTINGS
+// MY PROFILE
 // ═══════════════════════════════════════
-function renderLinesSettings(){
-  document.getElementById('linesSettings').innerHTML = [
-    {lbl:'Line 1 — Primary',num:'+91 98765 43210',st:'Active'},
-    {lbl:'Line 2 — Secondary',num:'+91 98765 43211',st:'Active'},
-    {lbl:'Line 3 — Backup',num:'+91 98765 43212',st:'Active'},
-  ].map(l=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border)">
-    <div><div style="font-size:12px;font-weight:600">${l.lbl}</div><div style="font-family:var(--mono);font-size:11px;color:var(--muted)">${l.num}</div></div>
-    <span style="font-size:11px;font-weight:700;color:var(--green)">● ${l.st}</span>
-  </div>`).join('')+`<button class="save-btn" style="margin-top:8px" onclick="toast('✅ Line settings saved')">Save</button>`;
+let myProfile = {
+  name: 'Rahul Singh',
+  role: 'Service Head',
+  email: 'rahul@skodakanpur.in',
+  ext: '100',
+  color: '#1b2e3c',
+  phones: [
+    { number: '+91 98765 43210', label: 'Primary Mobile', priority: 1 },
+    { number: '+91 98765 43211', label: 'Office Number',  priority: 2 },
+  ]
+};
+let mpSelectedColor = '#1b2e3c';
+
+function renderMyProfile() {
+  const p = myProfile;
+  const init = p.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  const hex = p.color.replace('#','');
+  const r=parseInt(hex.slice(0,2),16),g=parseInt(hex.slice(2,4),16),b=parseInt(hex.slice(4,6),16);
+  const bg = `rgba(${r},${g},${b},0.1)`;
+
+  document.getElementById('myProfileView').innerHTML = `
+    <div style="display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap;">
+      <!-- Avatar + basic info -->
+      <div style="display:flex;align-items:center;gap:14px;flex:1;min-width:240px;">
+        <div style="width:56px;height:56px;border-radius:50%;background:${bg};color:${p.color};display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;flex-shrink:0;border:2px solid ${p.color}33">${init}</div>
+        <div>
+          <div style="font-size:16px;font-weight:800;color:var(--skoda)">${p.name}</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px">${p.role}</div>
+          <div style="font-size:11px;font-family:var(--mono);color:var(--muted);margin-top:2px">${p.email||'—'} ${p.ext?'· Ext. '+p.ext:''}</div>
+        </div>
+      </div>
+      <!-- Phone numbers -->
+      <div style="flex:2;min-width:300px;">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:10px;">📱 Mapped Phone Numbers</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          ${p.phones.length ? p.phones.map((ph,i)=>`
+            <div style="display:flex;align-items:center;gap:10px;background:var(--bg);border-radius:9px;padding:9px 13px;border:1px solid var(--border);">
+              <div style="width:22px;height:22px;border-radius:50%;background:var(--skoda);color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0">${ph.priority}</div>
+              <div style="flex:1">
+                <div style="font-family:var(--mono);font-size:13px;font-weight:600;">${ph.number}</div>
+                <div style="font-size:11px;color:var(--muted);">${ph.label}</div>
+              </div>
+              <span style="font-size:10px;font-weight:700;color:var(--green);background:var(--green-bg);padding:3px 8px;border-radius:20px;">● Active</span>
+            </div>`).join('') : '<div style="color:var(--muted);font-size:13px;padding:8px 0;">No phone numbers mapped yet. Click Edit to add yours.</div>'}
+        </div>
+      </div>
+    </div>`;
+
+  // Also update topbar chip
+  document.querySelector('.agent-name').textContent = p.name.split(' ')[0]+' — '+p.role.split(' ').slice(-1)[0];
 }
 
-function renderTeamSettings(){
-  document.getElementById('teamSettings').innerHTML = team.map(t=>`
-    <div style="display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid var(--border)">
-      <div style="width:32px;height:32px;border-radius:50%;background:${t.bg};color:${t.color};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">${t.init}</div>
-      <div style="flex:1"><div style="font-size:12px;font-weight:700">${t.name}</div><div style="font-size:11px;color:var(--muted)">${t.role}</div></div>
-      <span style="font-size:11px;font-weight:700;color:${t.status==='available'?'var(--green)':'var(--red)'}">●</span>
-    </div>`).join('')+`<button class="save-btn" style="margin-top:8px" onclick="toast('✅ Team settings saved')">Save</button>`;
+function openMyProfile() {
+  const p = myProfile;
+  document.getElementById('mp-name').value = p.name;
+  document.getElementById('mp-role').value = p.role;
+  document.getElementById('mp-email').value = p.email || '';
+  document.getElementById('mp-ext').value = p.ext || '';
+  mpSelectedColor = p.color;
+  document.querySelectorAll('#mpColorPicker .color-swatch').forEach(s=>s.classList.toggle('selected', s.dataset.color===mpSelectedColor));
+  // Render phone rows
+  const list = document.getElementById('mp-phones-list');
+  list.innerHTML = '';
+  (p.phones.length ? p.phones : [{ number:'', label:'', priority:1 }]).forEach(ph => addPhoneRow(ph));
+  document.getElementById('myProfileModal').classList.add('open');
 }
+
+function addPhoneRow(ph) {
+  ph = ph || { number:'', label:'', priority: document.getElementById('mp-phones-list').children.length + 1 };
+  const div = document.createElement('div');
+  div.style.cssText = 'display:flex;align-items:center;gap:8px;';
+  div.innerHTML = `
+    <div style="width:22px;height:22px;border-radius:50%;background:var(--skoda);color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0">${ph.priority}</div>
+    <input class="field-input" placeholder="+91 98765 XXXXX" value="${ph.number}" style="flex:1;font-family:var(--mono);font-size:13px;" data-field="number"/>
+    <input class="field-input" placeholder="Label (e.g. Primary Mobile)" value="${ph.label}" style="flex:1;" data-field="label"/>
+    <button type="button" onclick="this.parentNode.remove();renumberPhoneRows()" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:16px;flex-shrink:0;padding:0 4px;" title="Remove">✕</button>`;
+  document.getElementById('mp-phones-list').appendChild(div);
+}
+
+function renumberPhoneRows() {
+  document.querySelectorAll('#mp-phones-list > div').forEach((row,i)=>{
+    const badge = row.querySelector('div');
+    if(badge) badge.textContent = i+1;
+  });
+}
+
+function pickMpColor(el) {
+  mpSelectedColor = el.dataset.color;
+  document.querySelectorAll('#mpColorPicker .color-swatch').forEach(s=>s.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function saveMyProfile() {
+  const name = document.getElementById('mp-name').value.trim();
+  if(!name) { toast('⚠️ Name is required'); return; }
+  // Collect phone rows
+  const phones = [];
+  document.querySelectorAll('#mp-phones-list > div').forEach((row,i)=>{
+    const num = row.querySelector('[data-field="number"]')?.value.trim();
+    const lbl = row.querySelector('[data-field="label"]')?.value.trim();
+    if(num) phones.push({ number:num, label:lbl||'Phone '+(i+1), priority:i+1 });
+  });
+  myProfile = {
+    name,
+    role: document.getElementById('mp-role').value.trim() || myProfile.role,
+    email: document.getElementById('mp-email').value.trim(),
+    ext: document.getElementById('mp-ext').value.trim(),
+    color: mpSelectedColor,
+    phones,
+  };
+  // Update the "me" entry in the team array (id:5)
+  const me = team.find(t=>t.id===5);
+  if(me) {
+    me.name = myProfile.name;
+    me.role = myProfile.role;
+    me.email = myProfile.email;
+    me.ext = myProfile.ext;
+    me.color = myProfile.color;
+    me.phone = phones[0]?.number || me.phone;
+    me.init = name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    const hex=myProfile.color.replace('#','');
+    const r=parseInt(hex.slice(0,2),16),g=parseInt(hex.slice(2,4),16),b=parseInt(hex.slice(4,6),16);
+    me.bg=`rgba(${r},${g},${b},0.12)`;
+  }
+  closeMyProfile();
+  renderMyProfile();
+  renderSidebar();
+  renderTeamSettings();
+  toast('✅ Profile saved — '+name);
+}
+
+function closeMyProfile() { document.getElementById('myProfileModal').classList.remove('open'); }
+
+// ═══════════════════════════════════════
+// SETTINGS — LINES (editable)
+// ═══════════════════════════════════════
+let lines = [
+  {id:1,label:'Primary Line',    num:'+91 98765 43210',assignedTo:1,priority:1,status:'active'},
+  {id:2,label:'Secondary Line',  num:'+91 98765 43211',assignedTo:2,priority:2,status:'active'},
+  {id:3,label:'Backup / Overflow',num:'+91 98765 43212',assignedTo:null,priority:3,status:'standby'},
+];
+
+function renderLinesSettings(){
+  const stColor={active:'var(--green)',standby:'var(--accent)',disabled:'var(--red)'};
+  document.getElementById('linesSettings').innerHTML = `
+  <table class="team-table">
+    <thead><tr><th>Priority</th><th>Label</th><th>Phone Number</th><th>Assigned To</th><th>Status</th><th>Actions</th></tr></thead>
+    <tbody>${lines.map(l=>{
+      const member = team.find(t=>t.id===l.assignedTo);
+      return `<tr>
+        <td><div class="line-priority-badge">${l.priority}</div></td>
+        <td style="font-weight:600">${l.label}</td>
+        <td><span style="font-family:var(--mono);font-size:12px">${l.num}</span></td>
+        <td>${member?`<div style="display:flex;align-items:center;gap:6px"><div style="width:22px;height:22px;border-radius:50%;background:${member.bg};color:${member.color};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700">${member.init}</div>${member.name.split(' ')[0]}</div>`:'<span style="color:var(--muted)">Shared</span>'}</td>
+        <td><span class="status-chip" style="background:${stColor[l.status]}18;color:${stColor[l.status]}">● ${l.status.charAt(0).toUpperCase()+l.status.slice(1)}</span></td>
+        <td style="display:flex;gap:6px">
+          <button class="action-btn" onclick="openEditLine(${l.id})">✏️ Edit</button>
+          <button class="action-btn danger" onclick="deleteLine(${l.id})">🗑</button>
+        </td>
+      </tr>`;
+    }).join('')}</tbody>
+  </table>`;
+}
+
+function openAddLine(){
+  document.getElementById('lineModalTitle').textContent='Add Phone Line';
+  document.getElementById('lm-id').value='';
+  document.getElementById('lm-label').value='';
+  document.getElementById('lm-num').value='';
+  document.getElementById('lm-priority').value='1';
+  document.getElementById('lm-status').value='active';
+  populateLineAssign();
+  document.getElementById('lm-assign').value='';
+  document.getElementById('lineModal').classList.add('open');
+}
+
+function openEditLine(id){
+  const l=lines.find(x=>x.id===id); if(!l) return;
+  document.getElementById('lineModalTitle').textContent='Edit Phone Line';
+  document.getElementById('lm-id').value=l.id;
+  document.getElementById('lm-label').value=l.label;
+  document.getElementById('lm-num').value=l.num;
+  document.getElementById('lm-priority').value=l.priority;
+  document.getElementById('lm-status').value=l.status;
+  populateLineAssign();
+  document.getElementById('lm-assign').value=l.assignedTo||'';
+  document.getElementById('lineModal').classList.add('open');
+}
+
+function populateLineAssign(){
+  const sel=document.getElementById('lm-assign');
+  sel.innerHTML='<option value="">— Unassigned / Shared —</option>';
+  team.forEach(t=>{ const o=document.createElement('option'); o.value=t.id; o.textContent=t.name+' ('+t.role+')'; sel.appendChild(o); });
+}
+
+function saveLineEntry(){
+  const label=document.getElementById('lm-label').value.trim();
+  const num=document.getElementById('lm-num').value.trim();
+  if(!label||!num){ toast('⚠️ Label and phone number are required'); return; }
+  const id=parseInt(document.getElementById('lm-id').value)||null;
+  const entry={
+    id: id||Date.now(),
+    label, num,
+    assignedTo:parseInt(document.getElementById('lm-assign').value)||null,
+    priority:parseInt(document.getElementById('lm-priority').value),
+    status:document.getElementById('lm-status').value,
+  };
+  if(id) { const i=lines.findIndex(x=>x.id===id); lines[i]=entry; toast('✅ Line updated'); }
+  else { lines.push(entry); toast('✅ Line added'); }
+  lines.sort((a,b)=>a.priority-b.priority);
+  closeLineModal(); renderLinesSettings(); renderSidebar();
+}
+
+function deleteLine(id){
+  if(!confirm('Remove this phone line?')) return;
+  lines=lines.filter(x=>x.id!==id); renderLinesSettings(); toast('🗑 Line removed');
+}
+
+function closeLineModal(){ document.getElementById('lineModal').classList.remove('open'); }
+
+// ═══════════════════════════════════════
+// SETTINGS — TEAM (editable)
+// ═══════════════════════════════════════
+let selectedColor = '#3dba7e';
+
+function renderTeamSettings(){
+  const stMap={available:'sc-available',busy:'sc-busy',break:'sc-break',off:'sc-off'};
+  const stLabel={available:'Available',busy:'On Call',break:'On Break',off:'Off Duty'};
+  document.getElementById('teamSettings').innerHTML=`
+  <table class="team-table">
+    <thead><tr><th>Member</th><th>Role</th><th>📱 Mobile (SIM)</th><th>Extension</th><th>Status</th><th>Actions</th></tr></thead>
+    <tbody>${team.map(t=>`<tr>
+      <td><div style="display:flex;align-items:center;gap:9px">
+        <div style="width:34px;height:34px;border-radius:50%;background:${t.bg};color:${t.color};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0">${t.init}</div>
+        <div><div style="font-weight:700">${t.name}</div><div style="font-size:11px;color:var(--muted)">${t.email||'—'}</div></div>
+      </div></td>
+      <td style="color:var(--muted);font-size:12px">${t.role}</td>
+      <td><span style="font-family:var(--mono);font-size:12px">${t.phone||'Not set'}</span></td>
+      <td style="color:var(--muted);font-size:12px">${t.ext||'—'}</td>
+      <td><span class="status-chip ${stMap[t.status]||'sc-available'}">● ${stLabel[t.status]||'Available'}</span></td>
+      <td style="display:flex;gap:6px">
+        <button class="action-btn" onclick="openEditTeam(${t.id})">✏️ Edit</button>
+        <button class="action-btn danger" onclick="deleteTeamMember(${t.id})">🗑</button>
+      </td>
+    </tr>`).join('')}</tbody>
+  </table>`;
+}
+
+function openAddTeam(){
+  document.getElementById('teamModalTitle').textContent='Add Team Member';
+  document.getElementById('teamModalSub').textContent='Fill in the details for the new team member.';
+  document.getElementById('teamModalSaveBtn').textContent='Save Member';
+  document.getElementById('tm-id').value='';
+  ['tm-name','tm-role','tm-phone','tm-ext','tm-email'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('tm-status').value='available';
+  selectedColor='#3dba7e';
+  document.querySelectorAll('.color-swatch').forEach(s=>s.classList.toggle('selected',s.dataset.color===selectedColor));
+  document.getElementById('teamModal').classList.add('open');
+}
+
+function openEditTeam(id){
+  const t=team.find(x=>x.id===id); if(!t) return;
+  document.getElementById('teamModalTitle').textContent='Edit Team Member';
+  document.getElementById('teamModalSub').textContent='Update details for '+t.name;
+  document.getElementById('teamModalSaveBtn').textContent='Update Member';
+  document.getElementById('tm-id').value=t.id;
+  document.getElementById('tm-name').value=t.name;
+  document.getElementById('tm-role').value=t.role;
+  document.getElementById('tm-phone').value=t.phone||'';
+  document.getElementById('tm-ext').value=t.ext||'';
+  document.getElementById('tm-email').value=t.email||'';
+  document.getElementById('tm-status').value=t.status;
+  selectedColor=t.color;
+  document.querySelectorAll('.color-swatch').forEach(s=>s.classList.toggle('selected',s.dataset.color===selectedColor));
+  document.getElementById('teamModal').classList.add('open');
+}
+
+function pickColor(el){
+  selectedColor=el.dataset.color;
+  document.querySelectorAll('.color-swatch').forEach(s=>s.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function saveTeamMember(){
+  const name=document.getElementById('tm-name').value.trim();
+  const role=document.getElementById('tm-role').value.trim();
+  if(!name||!role){ toast('⚠️ Name and role are required'); return; }
+  const id=parseInt(document.getElementById('tm-id').value)||null;
+  const init=name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  // lighten color for bg
+  const hex=selectedColor.replace('#','');
+  const r=parseInt(hex.slice(0,2),16),g=parseInt(hex.slice(2,4),16),b=parseInt(hex.slice(4,6),16);
+  const bg=`rgba(${r},${g},${b},0.12)`;
+  const entry={
+    id: id||Date.now(),
+    name, role, init,
+    color: selectedColor, bg,
+    phone: document.getElementById('tm-phone').value.trim(),
+    ext: document.getElementById('tm-ext').value.trim(),
+    email: document.getElementById('tm-email').value.trim(),
+    status: document.getElementById('tm-status').value,
+  };
+  if(id){ const i=team.findIndex(x=>x.id===id); team[i]=entry; toast('✅ '+name+' updated'); }
+  else { team.push(entry); toast('✅ '+name+' added to team'); }
+  closeTeamModal();
+  renderTeamSettings(); renderSidebar();
+  // refresh tech dropdowns
+  const sel=document.getElementById('f-tech');
+  sel.innerHTML='<option value="">— Select Technician —</option>';
+  team.forEach(t=>{ const o=document.createElement('option'); o.value=t.id; o.textContent=t.name+' — '+t.role; sel.appendChild(o); });
+  renderStats();
+}
+
+function deleteTeamMember(id){
+  const t=team.find(x=>x.id===id);
+  if(!t) return;
+  if(!confirm(`Remove ${t.name} from the team?`)) return;
+  const idx=team.findIndex(x=>x.id===id); team.splice(idx,1);
+  renderTeamSettings(); renderSidebar(); renderStats(); toast('🗑 '+t.name+' removed');
+}
+
+function closeTeamModal(){ document.getElementById('teamModal').classList.remove('open'); }
 
 // ═══════════════════════════════════════
 // TOAST
